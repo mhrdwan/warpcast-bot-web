@@ -193,7 +193,6 @@ function ClaimErdrop() {
 
 
 
-            {bearer && ValidasiLoginya == false && (
                 <div className='flex justify-center flex-col items-center mt-8'>
                     <h3 className='text-lg font-semibold mb-2'>Pilih Menu</h3>
                     <select onChange={(e) => setvalueSelectMenu(e.target.value)} className='border border-gray-300 rounded-md text-gray-600 h-10 pl-5 pr-10 bg-white hover:border-gray-400 focus:outline-none appearance-none'>
@@ -292,7 +291,6 @@ function ClaimErdrop() {
 
 
                 </div>
-            )}
 
         </div>
     )
