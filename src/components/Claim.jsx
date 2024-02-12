@@ -15,7 +15,7 @@ function ClaimErdrop() {
     const [dataConfersession, setDataConfersession] = useState([]);
     const [dataNextButtonConfersession, setdataNextButtonConfersession] = useState([])
     const [tokenIndex, setTokenIndex] = useState('');
-    const [ValidasiLoginya, setValidasiLoginya] = useState(false)
+    const [ValidasiLoginya, setValidasiLoginya] = useState(null)
     const [updatedDataConfersession, setUpdatedDataConfersession] = useState([]);
     const Akunku = [
         259493, 302887, 330578, 338077
@@ -92,6 +92,10 @@ function ClaimErdrop() {
 
     const handleLogin = async (validasi, text) => {
         const tokens = bearer.split('\n').filter(token => token.trim() !== '')
+        if (!bearer.startsWith("Bearer")) {
+            alert('token salah')
+            return
+        }
         localStorage.setItem('tokenLoginWarpcast', bearer)
 
         if (validasi === "claim") {
@@ -149,7 +153,7 @@ function ClaimErdrop() {
                     <textarea
                         className='w-full p-3 border border-gray-300 rounded-lg focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50'
                         onChange={(e) => setBearer(e.target.value)}
-                        placeholder='Masukkan token di sini, pisahkan dengan ENTER'
+                        placeholder='Masukkan token Bearer di sini, pisahkan dengan ENTER'
                         rows="4"
                     />
                     <button
@@ -164,7 +168,7 @@ function ClaimErdrop() {
 
 
 
-            {ValidasiLoginya == false ? (
+            {ValidasiLoginya == false || ValidasiLoginya == null ? (
                 <>
                     <div className='flex justify-center overflow-x-auto whitespace-nowrap py-2 mx-2 '>
                         {profileStates.map((profile, index) => (
@@ -188,7 +192,7 @@ function ClaimErdrop() {
 
 
 
-            {ValidasiLoginya == false || bearer <= 0 && (
+            {bearer  && ValidasiLoginya == false  && (
                 <div className='flex justify-center flex-col items-center mt-8'>
                     <h3 className='text-lg font-semibold mb-2'>Pilih Menu</h3>
                     <select onChange={(e) => setvalueSelectMenu(e.target.value)} className='border border-gray-300 rounded-md text-gray-600 h-10 pl-5 pr-10 bg-white hover:border-gray-400 focus:outline-none appearance-none'>
