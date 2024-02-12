@@ -206,7 +206,7 @@ function ClaimErdrop() {
                         <>
 
 
-                            <div className='mt-5 flex justify-center space-x-4 items-center mx-3'>
+                            <div className='mt-5 flex justify-center space-x-4 items-center '>
                                 <input onChange={(e) => setLinkConfersession(e.target.value)} className='border border-black rounded-sm h-9 pl-2 text-sm md:text-base' type='text' placeholder='Masukkan linknya' />
                                 <button disabled={LinkConfersession == null} onClick={() => handleLogin('claim', LinkConfersession)} className='h-9 border border-black rounded-md bg-teal-200 p-2 hover:bg-teal-300 focus:outline-none text-sm md:text-base'>Search</button>
                                 <button onClick={() => { setDataConfersession([]); setUpdatedDataConfersession([]) }} className='h-9 border border-red-500 rounded-md bg-red-500 p-2 focus:outline-none text-[0.7rem]  md:text-base'>Hapus Thread</button>
