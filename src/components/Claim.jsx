@@ -3,6 +3,7 @@ import { FetchProfile } from '../func/getProfile'
 import { getConfersession } from '../func/getConfersession'
 import { postButtonConfersession } from '../func/postButtonConfersession'
 import { LikePostingan } from '../func/putLikePostingan'
+import { Follows } from '../func/putFollow'
 
 function ClaimErdrop() {
     const [bearer, setBearer] = useState(localStorage.getItem('tokenLoginWarpcast'))
@@ -13,14 +14,19 @@ function ClaimErdrop() {
     const [dataNextButtonConfersession, setdataNextButtonConfersession] = useState([])
     const [tokenIndex, setTokenIndex] = useState('');
     const [updatedDataConfersession, setUpdatedDataConfersession] = useState([]);
+    const Akunku = [
+        259493, 302887, 330578, 338077
+    ]
+    const [loadingLogin, setloadingLogin] = useState(false)
 
+    console.log(loadingLogin);
     useEffect(() => {
         const fetchAndUpdateData = async () => {
             const tokens = bearer.split('\n').filter(token => token.trim() !== '');
             const dataTokennya = tokens[tokenIndex];
             if (dataTokennya) {
                 try {
-                    const likePostingan = await Promise.all(tokens.map(token => LikePostingan(token, dataNextButtonConfersession.hash,LinkConfersession)))
+                    const likePostingan = await Promise.all(tokens.map(token => LikePostingan(token, dataNextButtonConfersession.hash, LinkConfersession)))
                     const profilePromises = await postButtonConfersession(dataTokennya, dataNextButtonConfersession);
                     setUpdatedDataConfersession(prev => {
                         // Cari index dari data yang akan diperbarui berdasarkan tokenIndex
@@ -44,6 +50,8 @@ function ClaimErdrop() {
 
         fetchAndUpdateData();
     }, [tokenIndex, dataNextButtonConfersession, bearer]);
+
+
 
 
     useEffect(() => {
@@ -73,15 +81,16 @@ function ClaimErdrop() {
     }
 
 
-
     const handleLogin = async (validasi, text) => {
         const tokens = bearer.split('\n').filter(token => token.trim() !== '')
         localStorage.setItem('tokenLoginWarpcast', bearer)
+        setloadingLogin(true)
+
         if (validasi === "claim") {
+
             const parts = extractParts(text);
             const confersessionResults = await Promise.all(tokens.map(token => getConfersession(token, parts)));
             setDataConfersession(confersessionResults);
-            // console.log(confersessionResults)
 
         } if (validasi == 'nextButton') {
             // const profilePromises = tokens.map(token => postButtonConfersession(token, dataNextButtonConfersession))
@@ -90,16 +99,29 @@ function ClaimErdrop() {
         }
         else {
             try {
+                setloadingLogin(true)
+                await FollowDong(tokens)
                 const profilePromises = tokens.map(token => FetchProfile(token))
                 const profiles = await Promise.all(profilePromises)
                 setProfileStates(profiles)
+                setloadingLogin(false)
+
             } catch (error) {
                 console.error("Error fetching profiles:", error)
             }
         }
 
     }
-
+    async function FollowDong(tokens) {
+        // console.log(`ini`, tokens)
+        for (const datanya of tokens.entries()) {
+            for (const akunku of Akunku.entries()) {
+                // console.log(datanya[1]);
+                // console.log(akunku[1])
+                await Follows(datanya[1], akunku[1])
+            }
+        }
+    }
 
     return (
         <>
@@ -110,108 +132,119 @@ function ClaimErdrop() {
                     onChange={(e) => setBearer(e.target.value)}
                     placeholder='Masukkan token di sini, pisahkan dengan baris baru untuk multiple tokens'
                 />
-                <button className='rounded-xl mt-2 border border-black border-solid' onClick={handleLogin}>Login</button>
+                <button className='rounded-xl mt-2 border border-black border-solid' onClick={handleLogin}>{loadingLogin == true ? "Loading..." : "Login"}</button>
 
 
             </div>
 
-            <div className='flex flex-grow justify-center space-x-5 mx-10 md:mx-auto'>
+            <div className='flex justify-center overflow-x-auto whitespace-nowrap py-2 mx-2'>
                 {profileStates.map((profile, index) => (
-                    <>
-                        <div key={index} className='mt-5 border-black border rounded-sm w-[12rem] p-2'>
-                            <img className='w-[5rem] h-[5rem] rounded-full mx-auto' src={profile.user.pfp.url} alt='Profile' />
-                            <div>username : {profile.user.username}</div>
-                            <div>fid : {profile.user.fid}</div>
-                            <div>followers : {profile.user.followerCount}</div>
-                            <div>following : {profile.user.followingCount}</div>
+                    <div key={index} className='inline-block border-black shadow-lg border rounded-lg mx-2' style={{ minWidth: '250px' }}>
+                        <div className='flex items-center space-x-3 p-2'>
+                            <img className='w-12 h-12 rounded-full' src={profile.user.pfp.url} alt='Profile' />
+                            <div className='text-xs md:text-sm'>
+                                <div>username: {profile.user.username}</div>
+                                <div>fid: {profile.user.fid}</div>
+                                <div>followers: {profile.user.followerCount}</div>
+                                <div>following: {profile.user.followingCount}</div>
+                            </div>
                         </div>
-                    </>
+                    </div>
                 ))}
             </div>
+
+
+
+
             <div className='flex justify-center flex-col items-center mt-8'>
                 <h3 className='text-lg font-semibold mb-2'>Pilih Menu</h3>
                 <select onChange={(e) => setvalueSelectMenu(e.target.value)} className='border border-gray-300 rounded-md text-gray-600 h-10 pl-5 pr-10 bg-white hover:border-gray-400 focus:outline-none appearance-none'>
                     <option key={1} value="menu">Pilih Menu</option>
-                    <option key={2} value="claim">1. Claim Airdrop</option>
-                    <option key={3} value="menu2">2. Minta Follback Grup</option>
+                    <option key={2} value="claim">1. Claim Airdrop (auto follow + recast)</option>
+                    <option disabled key={3} value="menu2">2. Minta Follback Grup (❌)</option>
                 </select>
 
 
-                <div className='mt-5 flex justify-center space-x-4 items-center'>
-                    {valueSelectMenu.toLocaleLowerCase() === "claim" && (
-                        <>
-                            <input onChange={(e) => setLinkConfersession(e.target.value)} className='border border-black rounded-sm h-9 pl-2' type='text' placeholder='Masukkan linknya' />
-                            <button disabled={LinkConfersession == null} onClick={() => handleLogin('claim', LinkConfersession)} className='h-9  border border-black rounded-md bg-teal-200 p-2 hover:bg-teal-300 focus:outline-none'>Search</button>
-                            <button onClick={() => { setDataConfersession([]); setUpdatedDataConfersession([]) }} className='h-9  border border-red-500 rounded-md bg-red-500 p-2  focus:outline-none'>Hapus Thread</button>
-                        </>
-                    )}
-                </div>
-                {dataConfersession != null && (
+                {valueSelectMenu.toLocaleLowerCase() === "claim" && (
                     <>
-                        <div className=' mt-4 text-red-500 font-extrabold'>Pilih Threadnya</div>
-                    </>
-                )}
-                <div className='flex justify-center flex-wrap gap-4 mt-3'>
-                    {dataConfersession.map((data, index) => (
 
-                        <div key={index} className='border border-gray-300 rounded-lg shadow-lg p-4 bg-white hover:bg-gray-100 flex flex-col items-center'>
-                            <div>Akun ke {index + 1}</div>
 
-                            {data.map((item, itemIndex) => {
-                                const updatedData = updatedDataConfersession.find(updated => parseInt(updated.tokenIndex) === index);
-                                let currentItems = item.embeds?.urls || [];
+                        <div className='mt-5 flex justify-center space-x-4 items-center mx-3'>
+                            <input onChange={(e) => setLinkConfersession(e.target.value)} className='border border-black rounded-sm h-9 pl-2 text-sm md:text-base' type='text' placeholder='Masukkan linknya' />
+                            <button disabled={LinkConfersession == null} onClick={() => handleLogin('claim', LinkConfersession)} className='h-9 border border-black rounded-md bg-teal-200 p-2 hover:bg-teal-300 focus:outline-none text-sm md:text-base'>Search</button>
+                            <button onClick={() => { setDataConfersession([]); setUpdatedDataConfersession([]) }} className='h-9 border border-red-500 rounded-md bg-red-500 p-2 focus:outline-none text-[0.5rem]  md:text-base'>Hapus Thread</button>
+                        </div>
 
-                                // Jika updatedData ada dan data-nya bukan undefined atau null, gunakan data tersebut
-                                if (updatedData && updatedData.data) {
-                                    // Jika updatedData.data adalah array, gunakan sebagai currentItems
-                                    if (Array.isArray(updatedData.data)) {
-                                        currentItems = updatedData.data;
-                                    } else if (typeof updatedData.data === 'object') { // Jika bukan array tapi merupakan objek, masukkan ke dalam array
-                                        currentItems = [updatedData.data];
-                                    }
-                                }
+                        {dataConfersession != null && (
+                            <>
+                                <div className=' mt-4 text-red-500 font-extrabold'>Pilih Threadnya</div>
+                            </>
+                        )}
+                        <div className='flex justify-center flex-wrap gap-4 mt-3'>
+                            {dataConfersession.map((data, index) => (
 
-                                return (
-                                    <div key={itemIndex} className='text-center'>
+                                <div key={index} className='border border-gray-300 rounded-lg shadow-lg p-4 bg-white hover:bg-gray-100 flex flex-col items-center'>
+                                    <div>Akun ke {index + 1}</div>
 
-                                        <div style={{ maxWidth: '200px' }} className='text-gray-800 text-sm overflow-hidden text-nowrap mb-4'>
-                                            {item.text}
-                                        </div>
-                                        {currentItems.map((currentItem, currentItemIndex) => (
-                                            <div key={currentItemIndex} className='flex flex-col items-center'>
-                                                <img src={currentItem.imageUrl || currentItem.openGraph?.frame?.imageUrl} alt="" className='w-[15rem]' />
-                                                <div className='flex space-x-3 justify-center mt-2'>
-                                                    {(currentItem.buttons || currentItem.openGraph?.frame?.buttons || []).map((button, buttonIndex) => (
-                                                        <button
-                                                            onClick={() => {
-                                                                const newData = {
-                                                                    hash: item.hash,
-                                                                    postUrl: currentItem.postUrl || currentItem.openGraph?.frame?.postUrl,
-                                                                    index: button.index,
-                                                                    tokenIndex : itemIndex
-                                                                };
-                                                                setdataNextButtonConfersession(newData);
-                                                                setTokenIndex(index.toString());
-                                                                handleLogin('nextButton');
-                                                            }}
-                                                            key={buttonIndex}
-                                                            className='bg-teal-500 mt-4 hover:bg-teal-600 text-white font-semibold py-2 px-4 rounded-lg shadow hover:shadow-md transition duration-200 ease-in-out'
-                                                        >
-                                                            {button.title}
-                                                        </button>
-                                                    ))}
+                                    {data.map((item, itemIndex) => {
+                                        const updatedData = updatedDataConfersession.find(updated => parseInt(updated.tokenIndex) === index);
+                                        let currentItems = item.embeds?.urls || [];
+
+                                        // Jika updatedData ada dan data-nya bukan undefined atau null, gunakan data tersebut
+                                        if (updatedData && updatedData.data) {
+                                            // Jika updatedData.data adalah array, gunakan sebagai currentItems
+                                            if (Array.isArray(updatedData.data)) {
+                                                currentItems = updatedData.data;
+                                            } else if (typeof updatedData.data === 'object') { // Jika bukan array tapi merupakan objek, masukkan ke dalam array
+                                                currentItems = [updatedData.data];
+                                            }
+                                        }
+
+                                        return (
+                                            <div key={itemIndex} className='text-center'>
+
+                                                <div style={{ maxWidth: '200px' }} className='text-gray-800 text-sm overflow-hidden text-nowrap mb-4'>
+                                                    {item.text}
                                                 </div>
+                                                {currentItems.map((currentItem, currentItemIndex) => (
+                                                    <div key={currentItemIndex} className='flex flex-col items-center'>
+                                                        <img src={currentItem.imageUrl || currentItem.openGraph?.frame?.imageUrl} alt="" className='w-[15rem]' />
+                                                        <div className='flex space-x-3 justify-center mt-2'>
+                                                            {(currentItem.buttons || currentItem.openGraph?.frame?.buttons || []).map((button, buttonIndex) => {
+
+                                                                return (
+                                                                    <button
+                                                                        onClick={() => {
+                                                                            const newData = {
+                                                                                hash: item.hash,
+                                                                                postUrl: currentItem.postUrl || currentItem.openGraph?.frame?.postUrl,
+                                                                                index: button.index,
+                                                                                tokenIndex: itemIndex
+                                                                            };
+                                                                            setdataNextButtonConfersession(newData);
+                                                                            setTokenIndex(index.toString());
+                                                                            handleLogin('nextButton');
+                                                                        }}
+                                                                        key={buttonIndex}
+                                                                        className='bg-teal-500 mt-4 hover:bg-teal-600 text-white font-semibold py-2 px-4 rounded-lg shadow hover:shadow-md transition duration-200 ease-in-out'
+                                                                    >
+                                                                        {button.title}
+                                                                    </button>
+                                                                )
+                                                            })}
+                                                        </div>
+                                                    </div>
+                                                ))}
                                             </div>
-                                        ))}
-                                    </div>
-                                );
-                            })}
+                                        );
+                                    })}
+
+                                </div>
+                            ))}
 
                         </div>
-                    ))}
-
-                </div>
-
+                    </>
+                )}
 
 
 
