@@ -1,0 +1,1 @@
+export const baseUrl = `https://client.warpcast.com/v2/`
