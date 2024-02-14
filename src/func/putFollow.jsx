@@ -13,8 +13,6 @@ export async function Follows(token, id) {
 
             }
         })
-        console.log(data.data.result)
-        console.log('sukses follow')
     } catch (error) {
         console.log(error.response?.data)
 

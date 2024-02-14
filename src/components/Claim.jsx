@@ -6,6 +6,7 @@ import { LikePostingan } from '../func/putLikePostingan'
 import { Follows } from '../func/putFollow'
 import { useNavigate } from 'react-router-dom'
 import Fardegods from './bot/fardegods'
+import Channel from './bot/Channel'
 
 function ClaimErdrop() {
     const [Nama, setNama] = useState(localStorage.getItem('user'))
@@ -29,7 +30,6 @@ function ClaimErdrop() {
         }
     }, [])
 
-    console.log(loadingLogin);
     useEffect(() => {
         const fetchAndUpdateData = async () => {
             const tokens = bearer.split('\n').filter(token => token.trim() !== '');
@@ -118,7 +118,7 @@ function ClaimErdrop() {
                 await FollowDong(tokens)
                 const profilePromises = tokens.map(token => FetchProfile(token))
                 const profiles = await Promise.all(profilePromises)
-                console.log(`profiles`, profiles?.[0]?.response?.status)
+                // console.log(`profiles`, profiles?.[0]?.response?.status)
                 setProfileStates(profiles)
                 if (profiles?.[0]?.response?.status == 400) {
                     console.log('login error')
@@ -193,104 +193,108 @@ function ClaimErdrop() {
 
 
 
-                <div className='flex justify-center flex-col items-center mt-8'>
-                    <h3 className='text-lg font-semibold mb-2'>Pilih Menu</h3>
-                    <select onChange={(e) => setvalueSelectMenu(e.target.value)} className='border border-gray-300 rounded-md text-gray-600 h-10 pl-5 pr-10 bg-white hover:border-gray-400 focus:outline-none appearance-none'>
-                        <option key={1} value="menu">Pilih Menu</option>
-                        <option key={2} value="claim">1. Claim Airdrop (auto follow + recast)</option>
-                        <option disabled key={3} value="menu2">2. Minta Follback Grup (❌)</option>
-                        <option key={4} value="fardegods">3. Bot Fardegods Submit Address</option>
-                    </select>
+            <div className='flex justify-center flex-col items-center mt-8'>
+                <h3 className='text-lg font-semibold mb-2 text-teal-400'>Pilih Menu</h3>
+                <select onChange={(e) => setvalueSelectMenu(e.target.value)} className='border border-gray-300 rounded-md text-gray-600 h-10 pl-5 pr-10 bg-white hover:border-gray-400 focus:outline-none appearance-none'>
+                    <option key={1} value="menu">Pilih Menu</option>
+                    <option key={2} value="claim">1. Claim Airdrop (auto follow + recast)</option>
+                    <option disabled key={3} value="menu2">2. Minta Follback Grup (❌)</option>
+                    <option key={4} value="fardegods">3. Bot Fardegods Submit Address</option>
+                    <option key={5} value="channel">4. (Channel) Like + Recast + Comment minta Follback </option>
+                </select>
 
 
-                    {valueSelectMenu.toLocaleLowerCase() === "claim" && (
-                        <>
+                {valueSelectMenu.toLocaleLowerCase() === "claim" && (
+                    <>
 
 
-                            <div className='mt-5 flex justify-center space-x-4 items-center '>
-                                <input onChange={(e) => setLinkConfersession(e.target.value)} className='border border-black rounded-sm h-9 pl-2 text-sm md:text-base' type='text' placeholder='Masukkan linknya' />
-                                <button disabled={LinkConfersession == null} onClick={() => handleLogin('claim', LinkConfersession)} className='h-9 border border-black rounded-md bg-teal-200 p-2 hover:bg-teal-300 focus:outline-none text-sm md:text-base'>Search</button>
-                                <button onClick={() => { setDataConfersession([]); setUpdatedDataConfersession([]) }} className='h-9 border border-red-500 rounded-md bg-red-500 p-2 focus:outline-none text-[0.7rem]  md:text-base'>Hapus Thread</button>
-                            </div>
+                        <div className='mt-5 flex justify-center space-x-4 items-center '>
+                            <input onChange={(e) => setLinkConfersession(e.target.value)} className='border border-black rounded-sm h-9 pl-2 text-sm md:text-base' type='text' placeholder='Masukkan linknya' />
+                            <button disabled={LinkConfersession == null} onClick={() => handleLogin('claim', LinkConfersession)} className='h-9 border border-black rounded-md bg-teal-200 p-2 hover:bg-teal-300 focus:outline-none text-sm md:text-base'>Search</button>
+                            <button onClick={() => { setDataConfersession([]); setUpdatedDataConfersession([]) }} className='h-9 border border-red-500 rounded-md bg-red-500 p-2 focus:outline-none text-[0.7rem]  md:text-base'>Hapus Thread</button>
+                        </div>
 
-                            {/* {dataConfersession != null && (
+                        {/* {dataConfersession != null && (
                                 <>
                                     <div className=' mt-4 text-red-500 font-extrabold'>Pilih Threadnya</div>
                                 </>
                             )} */}
-                            <div className='flex justify-center flex-wrap gap-4 mt-3'>
-                                {dataConfersession.map((data, index) => (
+                        <div className='flex justify-center flex-wrap gap-4 mt-3'>
+                            {dataConfersession.map((data, index) => (
 
-                                    <div key={index} className='border w-[20rem] border-gray-300 rounded-lg shadow-lg p-4 bg-white hover:bg-gray-100 flex flex-col items-center'>
-                                        <div>Akun ke {index + 1}</div>
+                                <div key={index} className='border w-[20rem] border-gray-300 rounded-lg shadow-lg p-4 bg-white hover:bg-gray-100 flex flex-col items-center'>
+                                    <div>Akun ke {index + 1}</div>
 
-                                        {data.map((item, itemIndex) => {
-                                            const updatedData = updatedDataConfersession.find(updated => parseInt(updated.tokenIndex) === index);
-                                            let currentItems = item.embeds?.urls || [];
+                                    {data.map((item, itemIndex) => {
+                                        const updatedData = updatedDataConfersession.find(updated => parseInt(updated.tokenIndex) === index);
+                                        let currentItems = item.embeds?.urls || [];
 
-                                            // Jika updatedData ada dan data-nya bukan undefined atau null, gunakan data tersebut
-                                            if (updatedData && updatedData.data) {
-                                                // Jika updatedData.data adalah array, gunakan sebagai currentItems
-                                                if (Array.isArray(updatedData.data)) {
-                                                    currentItems = updatedData.data;
-                                                } else if (typeof updatedData.data === 'object') { // Jika bukan array tapi merupakan objek, masukkan ke dalam array
-                                                    currentItems = [updatedData.data];
-                                                }
+                                        // Jika updatedData ada dan data-nya bukan undefined atau null, gunakan data tersebut
+                                        if (updatedData && updatedData.data) {
+                                            // Jika updatedData.data adalah array, gunakan sebagai currentItems
+                                            if (Array.isArray(updatedData.data)) {
+                                                currentItems = updatedData.data;
+                                            } else if (typeof updatedData.data === 'object') { // Jika bukan array tapi merupakan objek, masukkan ke dalam array
+                                                currentItems = [updatedData.data];
                                             }
+                                        }
 
-                                            return (
-                                                <div key={itemIndex} className='text-center'>
+                                        return (
+                                            <div key={itemIndex} className='text-center'>
 
-                                                    <div style={{ maxWidth: '200px' }} className='text-gray-800 text-sm overflow-hidden text-nowrap mb-4'>
-                                                        {item.text}
-                                                    </div>
-                                                    {currentItems.map((currentItem, currentItemIndex) => (
-                                                        <div key={currentItemIndex} className='flex flex-col items-center'>
-                                                            <img src={currentItem.imageUrl || currentItem.openGraph?.frame?.imageUrl} alt="" className='w-[15rem]' />
-                                                            <div className='flex space-x-3 justify-center mt-2'>
-                                                                {(currentItem.buttons || currentItem.openGraph?.frame?.buttons || []).map((button, buttonIndex) => {
-
-                                                                    return (
-                                                                        <button
-                                                                            onClick={() => {
-                                                                                const newData = {
-                                                                                    hash: item.hash,
-                                                                                    postUrl: currentItem.postUrl || currentItem.openGraph?.frame?.postUrl,
-                                                                                    index: button.index,
-                                                                                    tokenIndex: itemIndex
-                                                                                };
-                                                                                setdataNextButtonConfersession(newData);
-                                                                                setTokenIndex(index.toString());
-                                                                                handleLogin('nextButton');
-                                                                            }}
-                                                                            key={buttonIndex}
-                                                                            className='bg-teal-500 mt-4 hover:bg-teal-600 text-white font-semibold py-2 px-4 rounded-lg shadow hover:shadow-md transition duration-200 ease-in-out'
-                                                                        >
-                                                                            {button.title}
-                                                                        </button>
-                                                                    )
-                                                                })}
-                                                            </div>
-                                                        </div>
-                                                    ))}
+                                                <div style={{ maxWidth: '200px' }} className='text-gray-800 text-sm overflow-hidden text-nowrap mb-4'>
+                                                    {item.text}
                                                 </div>
-                                            );
-                                        })}
+                                                {currentItems.map((currentItem, currentItemIndex) => (
+                                                    <div key={currentItemIndex} className='flex flex-col items-center'>
+                                                        <img src={currentItem.imageUrl || currentItem.openGraph?.frame?.imageUrl} alt="" className='w-[15rem]' />
+                                                        <div className='flex space-x-3 justify-center mt-2'>
+                                                            {(currentItem.buttons || currentItem.openGraph?.frame?.buttons || []).map((button, buttonIndex) => {
 
-                                    </div>
-                                ))}
+                                                                return (
+                                                                    <button
+                                                                        onClick={() => {
+                                                                            const newData = {
+                                                                                hash: item.hash,
+                                                                                postUrl: currentItem.postUrl || currentItem.openGraph?.frame?.postUrl,
+                                                                                index: button.index,
+                                                                                tokenIndex: itemIndex
+                                                                            };
+                                                                            setdataNextButtonConfersession(newData);
+                                                                            setTokenIndex(index.toString());
+                                                                            handleLogin('nextButton');
+                                                                        }}
+                                                                        key={buttonIndex}
+                                                                        className='bg-teal-500 mt-4 hover:bg-teal-600 text-white font-semibold py-2 px-4 rounded-lg shadow hover:shadow-md transition duration-200 ease-in-out'
+                                                                    >
+                                                                        {button.title}
+                                                                    </button>
+                                                                )
+                                                            })}
+                                                        </div>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        );
+                                    })}
 
-                            </div>
-                        </>
-                    )}
-                    {valueSelectMenu == 'fardegods' && (
-                        <Fardegods />
-                    )}
+                                </div>
+                            ))}
+
+                        </div>
+                    </>
+                )}
+                {valueSelectMenu == 'fardegods' && (
+                    <Fardegods />
+                )}
+                {valueSelectMenu == 'channel' && (
+                    <Channel profileStates={profileStates} bearer={bearer} />
+                )}
 
 
 
 
-                </div>
+            </div>
 
         </div>
     )
