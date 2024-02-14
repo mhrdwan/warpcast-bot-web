@@ -92,7 +92,7 @@ function Channel({ profileStates, bearer }) {
                 <label className='font-bold text-teal-400'>Pilih Akun Dahulu</label>
             </div>
             <div className='flex justify-center'>
-                <select onChange={(e) => { setindexKeberapa(e.target.selectedIndex); setPilihProfile(e.target.value) }} className='w-[15rem]   border border-gray-300 rounded-md text-gray-600 h-10 pl-5 pr-10 bg-white hover:border-gray-400 focus:outline-none appearance-none'>
+                <select onChange={(e) => { setindexKeberapa(e.target.selectedIndex); setPilihProfile(e.target.value) }} className='w-[20rem]   border border-gray-300 rounded-md text-gray-600 h-10 pl-5 pr-10 bg-white hover:border-gray-400 focus:outline-none appearance-none'>
                     <option >Pilih Akun</option>
                     {profileStates && profileStates.map((item, index) => (
                         <option key={item.user.fid} value={item.user.fid}>{index + 1}. {item.user.username}</option>
@@ -111,12 +111,12 @@ function Channel({ profileStates, bearer }) {
                     </div>
                 </>
             )}
-            {PilihProfile != null && SeluruhDatanya != null && (
+            {PilihProfile != null && SeluruhDatanya != null && LoadingButton == false &&(
                 <>
                     <div className='flex flex-col text-center items-center justify-center '>
                         <div className='mt-2 '>
                             {/* <textarea onChange={(e) => setIsiKomen(e.target.value)} placeholder='Tuliskan komen untuk masing-masing postingan (1 komen untuk semua postingan)' className='text-sm w-[15rem] h-[4rem] border border-gray-300 rounded-md text-gray-600  pl-2 pr-2 bg-white hover:border-gray-400 focus:outline-none appearance-none' /> */}
-                            <button onClick={komen} className='w-[15rem]  h-[2.2rem]  mt-2  bg-red-400 py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium hover:text-white'>Gas Bang</button>
+                            <button onClick={komen} className='w-[20rem] h-[2.2rem]  mt-2  bg-red-400 py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium hover:text-white'>Gas Bang</button>
                         </div>
                         <div className='mt-4 text-green-400'>
                             {IsiKomen}
