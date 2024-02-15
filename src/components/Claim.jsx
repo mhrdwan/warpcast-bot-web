@@ -200,7 +200,7 @@ function ClaimErdrop() {
                     <option key={2} value="claim">1. Claim Airdrop (auto follow + recast)</option>
                     <option disabled key={3} value="menu2">2. Minta Follback Grup (❌)</option>
                     <option key={4} value="fardegods">3. Bot Fardegods Submit Address</option>
-                    <option key={5} value="channel">4. (Channel) Like + Recast + Comment minta Follback </option>
+                    <option className='text-wrap' key={5} value="channel">4. (Channel) Like + Recast + Comment minta Follback </option>
                 </select>
 
 

@@ -92,7 +92,7 @@ function Channel({ profileStates, bearer }) {
                 <label className='font-bold text-teal-400'>Pilih Akun Dahulu</label>
             </div>
             <div className='flex justify-center'>
-                <select onChange={(e) => { setindexKeberapa(e.target.selectedIndex); setPilihProfile(e.target.value) }} className='w-[20rem]   border border-gray-300 rounded-md text-gray-600 h-10 pl-5 pr-10 bg-white hover:border-gray-400 focus:outline-none appearance-none'>
+                <select onChange={(e) => { setindexKeberapa(e.target.selectedIndex); setPilihProfile(e.target.value) }} className='w-11/12   border border-gray-300 rounded-md text-gray-600 h-10 pl-5 pr-10 bg-white hover:border-gray-400 focus:outline-none appearance-none'>
                     <option >Pilih Akun</option>
                     {profileStates && profileStates.map((item, index) => (
                         <option key={item.user.fid} value={item.user.fid}>{index + 1}. {item.user.username}</option>
