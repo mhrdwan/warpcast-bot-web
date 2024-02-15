@@ -195,7 +195,7 @@ function ClaimErdrop() {
 
             <div className='flex justify-center flex-col items-center mt-8 '>
                 <h3 className='text-lg font-semibold mb-2 text-teal-400'>Pilih Menu</h3>
-                <select onChange={(e) => setvalueSelectMenu(e.target.value)} className='w-[20rem] md:w-[30rem]   mx-auto border border-gray-300 rounded-md text-gray-600 h-10 pl-5 pr-10 bg-white hover:border-gray-400 focus:outline-none appearance-none'>
+                <select onChange={(e) => setvalueSelectMenu(e.target.value)} className='w-11/12 md:w-[30rem]   mx-auto border border-gray-300 rounded-md text-gray-600 h-10 pl-5 pr-10 bg-white hover:border-gray-400 focus:outline-none appearance-none'>
                     <option key={1} value="menu">Pilih Menu</option>
                     <option key={2} value="claim">1. Claim Airdrop (auto follow + recast)</option>
                     <option disabled key={3} value="menu2">2. Minta Follback Grup (❌)</option>
