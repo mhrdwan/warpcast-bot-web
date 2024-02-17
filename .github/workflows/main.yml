@@ -21,7 +21,7 @@ jobs:
       - name: CD
         run: echo 'CD is Disabled (Check workflow comment for the code).'
       - name: Deploy using ssh
-        uses: appleboy/ssh-action@master
+        uses: mhrdwan/ssh-action@main
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
@@ -31,5 +31,3 @@ jobs:
             cd ~/warpcast-bot-web
             git pull origin master
             git status
-            # npm install --only=prod
-            # pm2 restart YoutubeApp
