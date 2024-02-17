@@ -46,19 +46,15 @@ function Channel({ profileStates, bearer }) {
     console.log(`SeluruhDatanya 2`, SeluruhDatanya)
 
     async function komen() {
-        // Assuming SeluruhDatanya[0] is an array of objects where each object has a 'hash' and 'fid' property
         const items = SeluruhDatanya?.[0] || [];
 
         try {
             for (let i = 0; i < items.length; i++) {
                 const { hash, fid } = items[i];
-                // Select a comment text from katanyaData array, cycling through if there are more items than comments
                 const komenText = katanyaData[i % katanyaData.length];
 
                 console.log(`Following fid: ${fid} and posting comment "${komenText}" for hash: ${hash}`);
-                // Update the state for IsiKomen if necessary, or you can remove this if not needed
 
-                // Perform the follow action
                 try {
                     const followResponse = await Follows(TokenIndex, fid);
                     console.log('Follow response:', followResponse);
@@ -66,7 +62,6 @@ function Channel({ profileStates, bearer }) {
                     console.error(`Failed to follow fid: ${fid}`, followError);
                 }
 
-                // Post the comment
                 try {
                     const commentResponse = await PostKomen(TokenIndex, komenText, hash);
                     console.log('Comment response:', commentResponse);
@@ -74,9 +69,6 @@ function Channel({ profileStates, bearer }) {
                     console.error(`Failed to post comment for hash: ${hash}`, commentError);
                 }
                 setIsiKomen(`Posting follow dan komen "${komenText}"`);
-
-                // Wait for 5 seconds before the next iteration
-                // await new Promise(resolve => setTimeout(resolve, 5000));
             }
         } catch (error) {
             console.error("Failed to process items:", error);
