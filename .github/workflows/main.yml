@@ -21,7 +21,7 @@ jobs:
       - name: CD
         run: echo 'CD is Disabled (Check workflow comment for the code).'
       - name: Deploy using ssh
-        uses: mhrdwan/ssh-action@main
+        uses: mhrdwan/warpcast-bot-web@main
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
