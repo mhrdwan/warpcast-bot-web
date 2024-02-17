@@ -24,6 +24,6 @@ jobs:
         host: ${{ secrets.HOST }}
         username: ${{ secrets.USERNAME }}
         key: ${{ secrets.PRIVATE_KEY }}
-        port: ${{ secrets.PORT }} # Default to 22 if not specified
+        port: 22
         source: "dist/*" 
         target: "/path/to/your/server/directory"
